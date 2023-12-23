@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\FreeIssueController;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,3 +24,5 @@ Route::get('/',[ProductController::class,'main'])->name('main');
 Route::resource('products',ProductController::class);
 
 Route::resource('customers',CustomerController::class);
+
+Route::resource('freeIssues',FreeIssueController::class);

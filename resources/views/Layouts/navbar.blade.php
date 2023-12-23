@@ -15,7 +15,7 @@
     <script src="{{asset('bs-init.js')}}"></script>
 </head>
 <div class="row">
-    <h2>Product Management System</h2>
+    <h2>Software Engineer - Test</h2>
 </div>
 <section >
     @yield('content')

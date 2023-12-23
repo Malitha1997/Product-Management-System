@@ -9,7 +9,7 @@
         <a class="btn btn-success" type="button" href="{{route('customers.create')}}" style="width:20%;margin-top:5%;margin-left:40%">Customer Registration</a>
     </div>
     <div class="row">
-        <a class="btn btn-warning" type="button" href="" style="width:20%;margin-top:5%;margin-left:40%">Define Free Issue</a>
+        <a class="btn btn-warning" type="button" href="{{route('freeIssues.create')}}" style="width:20%;margin-top:5%;margin-left:40%">Define Free Issues</a>
     </div>
     <div class="row">
         <a class="btn btn-danger" type="button" href="" style="width:20%;margin-top:5%;margin-left:40%">Place Order</a>

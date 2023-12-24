@@ -12,7 +12,7 @@
         <a class="btn btn-warning" type="button" href="{{route('freeIssues.create')}}" style="width:20%;margin-top:5%;margin-left:40%">Define Free Issues</a>
     </div>
     <div class="row">
-        <a class="btn btn-danger" type="button" href="" style="width:20%;margin-top:5%;margin-left:40%">Place Order</a>
+        <a class="btn btn-danger" type="button" href="{{route('placingOrders.create')}}" style="width:20%;margin-top:5%;margin-left:40%">Placing Order</a>
     </div>
 </div>
 @endsection

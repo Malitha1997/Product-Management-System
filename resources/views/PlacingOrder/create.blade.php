@@ -133,15 +133,27 @@
 
     if(type==='Multiple'){
         if (!isNaN(quantity) && !isNaN(purchase) && !isNaN(freeQuantity)) {
-            var free = (quantity / purchase) * freeQuantity;
-            document.getElementById('free').value = free.toFixed(0);
+            if(quantity >= purchase){
+                var free = (quantity / purchase) * freeQuantity;
+                document.getElementById('free').value = free.toFixed(0);
+            }
+            else if(quantity < purchase){
+                document.getElementById('free').value = 0;
+            }
+            
         } else {
             document.getElementById('free').value = '';
         }
     }   
     else if(type==='Flat'){
-        document.getElementById('free').value = freeQuantity;
+        if(quantity >= purchase){
+            document.getElementById('free').value = freeQuantity;
+        }
+        else if(quantity < purchase){
+            document.getElementById('free').value = 0;
+        }
     }
+    
 
     var amount=price*quantity;
     document.getElementById('amount').value = amount;
@@ -204,10 +216,20 @@
         var free = 0;
         if(type === 'Multiple') {
             if (!isNaN(quantity) && !isNaN(purchase) && !isNaN(freeQuantity)) {
-                free = (quantity / purchase) * freeQuantity;
+                if(quantity>=purchase){
+                    free = (quantity / purchase) * freeQuantity;
+                }
+                else if(quantity<purchase){
+                    free=0;
+                }
             }
         } else if(type === 'Flat') {
-            free = freeQuantity;
+            if(quantity>=purchase){
+                free = freeQuantity;
+            }
+            else if(quantity<purchase){
+                free=0;
+            }
         }
         row.find('[name="free[]"]').val(free.toFixed(0));
 

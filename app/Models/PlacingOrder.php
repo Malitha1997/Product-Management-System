@@ -11,6 +11,18 @@ class PlacingOrder extends Model
 {
     use HasFactory;
 
+    protected $table = 'placing_orders';
+
+    protected $fillable = [
+        'order_number',
+        'quantity',
+        'free',
+        'amount',
+        'net_amount',
+        'product_id',
+        'customer_id'
+    ];
+
     public function product(){
         return $this->belongsTo(Product::class);
     }

@@ -27,19 +27,22 @@
             </tr>
         </thead>
         <tbody>
-            @if($placingOrders)
-            @foreach($placingOrders as $placingOrder)
+        @forelse($placingOrders as $orderNumber => $orders)
+            <!-- Assuming each order number group has at least one order -->
+            @php
+                $firstOrder = $orders->first();
+            @endphp
+
             <tr>
-            <td>{{$placingOrder->order_number}}</td>
-            <td>{{$placingOrder->customer->name}}</td>
-            <td>{{$placingOrder->created_at}}</td>
-            <td>Rs.{{$placingOrder->net_amount}}</td>
-            <td><a type="button" class="btn btn-success" href="{{route('placingOrders.show',$placingOrder->id)}}">View</a></td>
+                <td>{{ $orderNumber }}</td>
+                <td>{{ $firstOrder->customer->name }}</td>
+                <td>{{ $firstOrder->created_at->format('Y-m-d H:i') }}</td>
+                <td>Rs.{{ $firstOrder->net_amount }}</td>
+                <td><a type="button" class="btn btn-success" href="{{ route('placingOrders.show', $firstOrder->id) }}">View</a></td>
             </tr>
-            @endforeach
-            @else
-            <tr></tr>
-            @endif
+        @empty
+            <tr><td colspan="5">No orders found</td></tr>
+        @endforelse
         </tbody>
     </table>
 </div>

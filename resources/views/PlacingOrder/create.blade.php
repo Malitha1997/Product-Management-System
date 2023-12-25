@@ -1,6 +1,7 @@
 @extends('Layouts.navbar')
 
 @section('content')
+
 <div class="container" style="font-family:poppins">
     <div class="row">
         <div class="col-12">
@@ -38,7 +39,7 @@
                 <input class="form-control-md" name="order_number" id="order_number" style="width:50%" value="{{$orderNumber}}" readonly>
             </div>
         </div>
-    <table class="table table-striped">
+    <table class="table table-striped" id="myTable">
         <thead>
             <tr>
             <th scope="col">Product Name</th>
@@ -47,40 +48,36 @@
             <th scope="col">Quantity</th>
             <th scope="col">Free</th>
             <th scope="col">Amount</th>
-            <th scope="col">Action</th>
+            <th scope="col" class="NoPrint"><button class="btn btn-warning" type="button" id="addRowBtn" onclick="BtnAdd()">+</button></th>
             </tr>
         </thead>
-        <tbody>
-            <tr>
+        <tbody id="TBody">
+            <tr id="TRow">
             <td>
-                <select class="form-select-md" name="product_id" id="productSelect" style="">
+                <select class="form-select-md" name="product_id[]" id="productSelect" style="">
                     <option selected>Select the product</option>
                     @foreach($products as $product)
                     <option value="{{$product->id}}" code="{{$product->code}}" price="{{$product->price}}" free="{{$product->freeIssue->free_quantity}}" purchase_quantity="{{$product->freeIssue->purchase_quantity}}" type="{{$product->freeIssue->type}}">{{$product->name}}</option>
                     @endforeach
                 </select>
             </td>
-            <td><input type="text" class="form-control-md" name="product_code" id="product_code"   readonly></td>
-            <td><input type="text" class="form-control-md" name="price" id="price"  readonly></td>
-            <td><input type="text" class="form-control-md" name="quantity" id="quantity"  placeholder="Enter quantity"></td>
-            <td><input type="text" class="form-control-md" name="free" id="free"  readonly></td>
-            <td><input type="text" class="form-control-md" name="amount" id="amount"  readonly></td>
-            <td><a type="button" class="btn btn-primary" href="">Edit</a></td>
+            <td><input type="text" class="form-control-md" name="product_code" id="product_code"  readonly></td>
+            <td><input type="text" class="form-control-md" name="price" id="price" readonly></td>
+            <td><input type="text" class="form-control-md" name="quantity[]" id="quantity" placeholder="Enter quantity"></td>
+            <td><input type="text" class="form-control-md" name="free[]" id="free" readonly></td>
+            <td><input type="text" class="form-control-md" name="amount[]" id="amount" readonly></td>
+            <td><input type="hidden" class="form-control-md" name="free_quantity" id="free_quantity" style="width:50%" readonly>
+            <input type="hidden" class="form-control-md" name="purchase" id="purchase" style="width:50%" readonly>
+            <input type="hidden" class="form-control-md" name="type" id="type" style="width:50%" readonly></td>
             </tr> 
-            <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td style="text-align:right">Net Amount :</td>
-            <td><input type="text" class="form-control-md" name="net_amount" id="net_amount"  readonly></td>
-            <td></td>
-            </tr>  
         </tbody>
     </table>
-    <input type="hidden" class="form-control-md" name="free_quantity" id="free_quantity" style="width:50%" readonly>
-    <input type="hidden" class="form-control-md" name="purchase" id="purchase" style="width:50%" readonly>
-    <input type="hidden" class="form-control-md" name="type" id="type" style="width:50%" readonly>
+    <div class="row">
+        <div class="col" style="text-align:right">
+            Net Amount : <input type="text" class="form-control-md" name="net_amount" id="net_amount"  readonly>
+        </div>
+    </div>
+    
     <div class="row">
         <div class="col-12" style="text-align:center">
             <button data-bs-toggle="modal" data-bs-target="#save" class="btn btn-primary" type="button" style="margin-top:5%;">SAVE</button>
@@ -95,7 +92,6 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <!-- <h5 id="h4" class="modal-title" id="exampleModalLabel">Warning</h5> -->
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
@@ -149,8 +145,77 @@
 
     var amount=price*quantity;
     document.getElementById('amount').value = amount;
-    document.getElementById('net_amount').value = amount;
     
 });
+</script>
+<script>
+    $(document).ready(function() {
+        $("#addRowBtn").click(function() {
+            var newRow = $("#TRow").clone();
+            newRow.removeAttr('id');
+            newRow.find('[id]').each(function() {
+                $(this).removeAttr('id');
+            });
+
+            newRow.find('input').val('');
+            newRow.find('select').prop('selectedIndex', 0);
+
+            newRow.appendTo("#TBody");
+    });
+    function calculateNetAmount() {
+        var netAmount = 0;
+        $("#TBody").find('tr').each(function() {
+            var amount = parseFloat($(this).find('[name="amount[]"]').val());
+            if (!isNaN(amount)) {
+                netAmount += amount;
+            }
+        });
+
+        $('#net_amount').val(netAmount.toFixed(0));
+    }
+
+    $("#TBody").on('change', '.form-select-md', function() {
+        var selectedOption = $(this).find('option:selected');
+        var code = selectedOption.attr('code');
+        var price = selectedOption.attr('price');
+        var freeQuantity = selectedOption.attr('free');
+        var purchaseQuantity = selectedOption.attr('purchase_quantity');
+        var type = selectedOption.attr('type');
+
+        var parentRow = $(this).closest('tr');
+        parentRow.find('[name="product_code"]').val(code);
+        parentRow.find('[name="price"]').val(price);
+        parentRow.find('[name="free_quantity"]').val(freeQuantity);
+        parentRow.find('[name="purchase"]').val(purchaseQuantity);
+        parentRow.find('[name="type"]').val(type);
+
+        calculateNetAmount();
+    });
+
+
+    $("#TBody").on('input', '[name="quantity[]"]', function() {
+        var row = $(this).closest('tr');
+        var quantity = parseFloat($(this).val());
+        var purchase = parseFloat(row.find('[name="purchase"]').val());
+        var freeQuantity = parseFloat(row.find('[name="free_quantity"]').val());
+        var price = parseFloat(row.find('[name="price"]').val());
+        var type = row.find('[name="type"]').val();
+
+        var free = 0;
+        if(type === 'Multiple') {
+            if (!isNaN(quantity) && !isNaN(purchase) && !isNaN(freeQuantity)) {
+                free = (quantity / purchase) * freeQuantity;
+            }
+        } else if(type === 'Flat') {
+            free = freeQuantity;
+        }
+        row.find('[name="free[]"]').val(free.toFixed(0));
+
+        var amount = price * quantity;
+        row.find('[name="amount[]"]').val(amount.toFixed(0));
+        calculateNetAmount();
+    });
+});
+
 </script>
 @endsection

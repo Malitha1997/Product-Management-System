@@ -15,7 +15,8 @@ class PlacingOrderController extends Controller
      */
     public function index()
     {
-        $placingOrders=PlacingOrder::all();
+        $orders = PlacingOrder::with('customer')->get(); 
+        $placingOrders = $orders->groupBy('order_number');
         return view('PlacingOrder.index',compact('placingOrders'));
     }
 
@@ -24,7 +25,6 @@ class PlacingOrderController extends Controller
      */
     public function generateCode($length = 10) {
         $prefix = "ORDER-";
-        // $dateComponent = date('Ym'); // YYYYMM format
         $characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $maxNumberLength = $length - strlen($prefix);
         $randomString = '';
@@ -59,25 +59,25 @@ class PlacingOrderController extends Controller
         request()->validate([
             'customer_id'=>'required|string',
             'order_number'=>'required|string',
-            'product_id'=>'required|string',
-            'quantity'=>'required|string',
-            'free'=>'required|string',
-            'amount'=>'required|string',
+            'product_id'=>'required|array',
+            'quantity'=>'required|array',
+            'free'=>'required|array',
+            'amount'=>'required|array',
             'net_amount'=>'required|string'
         ]);
 
-        $placingOrder = new PlacingOrder;
+        foreach ($request->product_id as $key => $value) {
+            $placingOrder = new PlacingOrder; 
+            $placingOrder->product_id = $value;
+            $placingOrder->quantity = $request->quantity[$key];
+            $placingOrder->free = $request->free[$key];
+            $placingOrder->amount = $request->amount[$key];
+            $placingOrder->order_number = $request->order_number;
+            $placingOrder->customer_id = $request->customer_id;
+            $placingOrder->net_amount=$request->net_amount;
 
-        $placingOrder->customer_id=$request->customer_id;
-        $placingOrder->order_number=$request->order_number;
-        $placingOrder->product_id=$request->product_id;
-        $placingOrder->quantity=$request->quantity;
-        $placingOrder->free=$request->free;
-        $placingOrder->amount=$request->amount;
-        $placingOrder->net_amount=$request->net_amount;
-
-        $placingOrder->save();
-
+            $placingOrder->save();
+        }
         return redirect()->route('placingOrders.index');
 
     }
@@ -87,8 +87,10 @@ class PlacingOrderController extends Controller
      */
     public function show(string $id)
     {
-        $placingOrder=PlacingOrder::find($id);
-        return view('PlacingOrder.show',compact('placingOrder'));
+        $placingOrder = PlacingOrder::with('product')->find($id);
+        $placingOrders = PlacingOrder::where('order_number', $placingOrder->order_number)->get();
+        $orders=PlacingOrder::get();
+        return view('PlacingOrder.show',compact('placingOrder','placingOrders','orders'));
     }
 
     /**

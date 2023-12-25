@@ -23,19 +23,6 @@ class PlacingOrderController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function generateCode($length = 10) {
-        $prefix = "ORDER-";
-        $characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        $maxNumberLength = $length - strlen($prefix);
-        $randomString = '';
-    
-        for ($i = 0; $i < $maxNumberLength; $i++) {
-            $randomString .= $characters[rand(0, strlen($characters) - 1)];
-        }
-    
-        return $prefix . $randomString;
-    }
-
     public function create(Request $request)
     {
         $products=Product::all();
@@ -43,12 +30,9 @@ class PlacingOrderController extends Controller
         $freeIssue=FreeIssue::all();
         $placingOrder=PlacingOrder::all();
 
-        $count = $request->session()->get('counter', 0);
-        $count++;
-        $request->session()->put('counter', $count);
-        $orderNumber = str_pad($count, 3, '0', STR_PAD_LEFT);
+        $orderNumber = random_int(100000, 999999);
 
-        return view('PlacingOrder.create',compact('products','customers','orderNumber','freeIssue'));
+        return view('PlacingOrder.create',compact('products','customers','freeIssue','orderNumber'));
     }
 
     /**

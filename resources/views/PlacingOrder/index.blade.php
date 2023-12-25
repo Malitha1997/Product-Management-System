@@ -28,11 +28,9 @@
         </thead>
         <tbody>
         @forelse($placingOrders as $orderNumber => $orders)
-            <!-- Assuming each order number group has at least one order -->
             @php
                 $firstOrder = $orders->first();
             @endphp
-
             <tr>
                 <td>{{ $orderNumber }}</td>
                 <td>{{ $firstOrder->customer->name }}</td>

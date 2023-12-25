@@ -1,6 +1,6 @@
 How to clone?
 
-1.Run git clone <git repository code>    
+1.Run git clone https://github.com/Malitha1997/Product-Management-System.git    
 2.Run composer install    
 3.Run cp .env.example .env        
 4.Run php artisan key:generate    (Put the generated key to .env->APP_KEY)    
